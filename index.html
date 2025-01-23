@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Facturación</title>
+    <link rel="stylesheet" href="css/cssBoos/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="text-center">Sistema de Facturación</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Información del Cliente</h4>
+                        <div class="form-group mb-3">
+                            <label>Número de Factura</label>
+                            <input type="text" class="form-control" id="facturaNumero">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Nombres</label>
+                            <input type="text" class="form-control" id="clienteNombres">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Apellidos</label>
+                            <input type="text" class="form-control" id="clienteApellidos">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Dirección</label>
+                            <input type="text" class="form-control" id="clienteDireccion">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Email</label>
+                            <input type="email" class="form-control" id="clienteEmail">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Productos</h4>
+                        <div id="productosContainer">
+                            <div class="producto-row mb-3">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label>Código</label>
+                                        <input type="text" class="form-control producto-codigo">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Nombre</label>
+                                        <input type="text" class="form-control producto-nombre">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Valor</label>
+                                        <input type="number" class="form-control producto-valor">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Cantidad</label>
+                                        <input type="number" class="form-control producto-cantidad" value="1">
+                                    </div>
+                                    <div class="col-md-1 align-self-end">
+                                        <button class="btn btn-success btn-sm" id="agregarProducto">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4>Resumen de Compra</h4>
+                                <table class="table table-bordered" id="tablaResumen">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Producto</th>
+                                            <th>Valor</th>
+                                            <th>Cantidad</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="resumenProductos"></tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-6 offset-md-6">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td>Subtotal:</td>
+                                                <td id="subtotal">$0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td>IVA (19%):</td>
+                                                <td id="iva">$0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total:</strong></td>
+                                                <td id="total"><strong>$0.00</strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-primary" id="botonPagar">Pagar</button>
+                                    <button class="btn btn-secondary ml-2" id="botonNuevaFactura">Nueva Factura</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jsBoos/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

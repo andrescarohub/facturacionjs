@@ -1,0 +1,31 @@
+body {
+    background-color: #f4f6f9;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.card-header {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.table th {
+    background-color: #f1f3f5;
+    color: #343a40;
+}
+
+#botonPagar {
+    transition: all 0.3s ease;
+}
+
+#botonPagar:hover {
+    transform: scale(1.05);
+}
