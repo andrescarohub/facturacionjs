@@ -1,77 +1,69 @@
-
+import inventario from './inventario.js';
+import facturacion from './facturas.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    const productosSelector = document.querySelector('.producto-selector');
     const productosContainer = document.getElementById('productosContainer');
     const agregarProductoBtn = document.getElementById('agregarProducto');
-    const resumenProductos = document.getElementById('resumenProductos');
+    const botonPagar = document.getElementById('botonPagar');
     const subtotalElement = document.getElementById('subtotal');
     const ivaElement = document.getElementById('iva');
     const totalElement = document.getElementById('total');
-    const botonPagar = document.getElementById('botonPagar');
-    const botonNuevaFactura = document.getElementById('botonNuevaFactura');
 
-    let productosCounter = 1;
+    function cargarProductosSelector() {
+        inventario.forEach(producto => {
+            const option = document.createElement('option');
+            option.value = producto.codigo;
+            option.textContent = producto.nombre;
+            productosSelector.appendChild(option);
+        });
+    }
+    cargarProductosSelector();
 
     agregarProductoBtn.addEventListener('click', () => {
-        const nuevoProductoRow = document.createElement('div');
-        nuevoProductoRow.classList.add('producto-row', 'mb-3');
-        nuevoProductoRow.innerHTML = `
-            <div class="row">
-                <div class="col-md-3">
-                    <input type="text" class="form-control producto-codigo">
-                </div>
+        const codigoSeleccionado = productosSelector.value;
+        const productoSeleccionado = inventario.find(p => p.codigo === codigoSeleccionado);
+
+        if (productoSeleccionado) {
+            const nuevoProductoRow = document.createElement('div');
+            nuevoProductoRow.classList.add('row', 'mb-2');
+            nuevoProductoRow.innerHTML = `
                 <div class="col-md-4">
-                    <input type="text" class="form-control producto-nombre">
+                    <input type="text" class="form-control producto-nombre" value="${productoSeleccionado.nombre}" readonly>
                 </div>
                 <div class="col-md-2">
-                    <input type="number" class="form-control producto-valor">
+                    <input type="text" class="form-control producto-codigo" value="${productoSeleccionado.codigo}" readonly>
                 </div>
                 <div class="col-md-2">
-                    <input type="number" class="form-control producto-cantidad" value="1">
+                    <input type="number" class="form-control producto-valor" value="${productoSeleccionado.precio}" readonly>
                 </div>
-                <div class="col-md-1 align-self-end">
-                    <button class="btn btn-danger btn-sm eliminar-producto">-</button>
+                <div class="col-md-2">
+                    <input type="number" class="form-control producto-cantidad" value="1" min="1">
                 </div>
-            </div>
-        `;
-        productosContainer.appendChild(nuevoProductoRow);
+                <div class="col-md-2">
+                    <button class="btn btn-danger btn-sm eliminar-producto">Eliminar</button>
+                </div>
+            `;
 
-        nuevoProductoRow.querySelector('.eliminar-producto').addEventListener('click', () => {
-            productosContainer.removeChild(nuevoProductoRow);
+            productosContainer.appendChild(nuevoProductoRow);
+
+            nuevoProductoRow.querySelector('.eliminar-producto').addEventListener('click', () => {
+                productosContainer.removeChild(nuevoProductoRow);
+                calcularTotales();
+            });
+
             calcularTotales();
-        });
-
-        const inputs = nuevoProductoRow.querySelectorAll('input');
-        inputs.forEach(input => {
-            input.addEventListener('input', calcularTotales);
-        });
+        }
     });
 
     function calcularTotales() {
         const productos = document.querySelectorAll('.producto-row');
         let subtotal = 0;
-        resumenProductos.innerHTML = '';
 
         productos.forEach(producto => {
-            const codigo = producto.querySelector('.producto-codigo').value;
-            const nombre = producto.querySelector('.producto-nombre').value;
             const valor = parseFloat(producto.querySelector('.producto-valor').value) || 0;
             const cantidad = parseInt(producto.querySelector('.producto-cantidad').value) || 1;
-            
-            if (codigo && nombre && valor > 0) {
-                const totalProducto = valor * cantidad;
-                subtotal += totalProducto;
-
-                const filaResumen = document.createElement('tr');
-                filaResumen.innerHTML = `
-                    <td>${codigo}</td>
-                    <td>${nombre}</td>
-                    <td>$${valor.toFixed(2)}</td>
-                    <td>${cantidad}</td>
-                    <td>$${totalProducto.toFixed(2)}</td>
-                `;
-                resumenProductos.appendChild(filaResumen);
-            }
+            subtotal += valor * cantidad;
         });
 
         const iva = subtotal * 0.19;
@@ -83,33 +75,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     botonPagar.addEventListener('click', () => {
-        alert('Pago realizado con éxito');
-    });
+        const productos = document.querySelectorAll('.row');
+        const productosFactura = [];
 
-    botonNuevaFactura.addEventListener('click', () => {
-        // Resetear todos los campos
-        document.getElementById('facturaNumero').value = '';
+        productos.forEach(producto => {
+            const codigo = producto.querySelector('.producto-codigo')?.value;
+            const nombre = producto.querySelector('.producto-nombre')?.value;
+            const valor = parseFloat(producto.querySelector('.producto-valor')?.value);
+            const cantidad = parseInt(producto.querySelector('.producto-cantidad')?.value);
+
+            if (codigo && nombre && valor && cantidad) {
+                productosFactura.push({ codigo, nombre, valor, cantidad });
+            }
+        });
+
+        const datosCliente = {
+            nombres: document.getElementById('clienteNombres').value,
+            apellidos: document.getElementById('clienteApellidos').value,
+            email: document.getElementById('clienteEmail').value
+        };
+
+        const facturaGenerada = facturacion.generarFactura(datosCliente, productosFactura);
+        alert('Compra realizada');
+
+        // Resetear formulario
+        productosContainer.innerHTML = '';
         document.getElementById('clienteNombres').value = '';
         document.getElementById('clienteApellidos').value = '';
-        document.getElementById('clienteDireccion').value = '';
         document.getElementById('clienteEmail').value = '';
-
-        // Mantener solo una fila de producto
-        const rows = document.querySelectorAll('.producto-row');
-        rows.forEach((row, index) => {
-            if (index > 0) row.remove();
-        });
-
-        // Limpiar inputs de la primera fila
-        const primeraFila = document.querySelector('.producto-row');
-        primeraFila.querySelectorAll('input').forEach(input => {
-            input.value = input.type === 'number' ? '1' : '';
-        });
-
-        // Resetear totales
         calcularTotales();
     });
-
-    // Calcular totales inicialmente
-    calcularTotales();
 });
